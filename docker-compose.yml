@@ -1,0 +1,15 @@
+services:
+  minecraft:
+    image: ivantopgaming/minecraft_server:zulu-11
+    container_name: survival
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./server:/minecraft
+    environment:
+      - JVM_OPTS=-Xmx8G -Xms8G
+      - DIFFICULTY=hard
+      - ALLOW_NETHER=false
+      - MOTD=Waiting for players...
+      - ONLINE_MODE=false
+    restart: unless-stopped

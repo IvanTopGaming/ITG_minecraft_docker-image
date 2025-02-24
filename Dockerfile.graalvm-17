@@ -1,0 +1,15 @@
+FROM ghcr.io/graalvm/jdk-community:17
+
+WORKDIR /minecraft
+
+COPY server.properties /tmp/server.properties
+
+COPY entrypoint.sh /utils/entrypoint.sh
+COPY setup_properties.sh /utils/setup_properties.sh
+COPY start_server.sh /utils/start_server.sh
+
+RUN chmod +x /utils/entrypoint.sh /utils/setup_properties.sh /utils/start_server.sh
+
+ENV JVM_OPTS="-Xmx4098M -Xms4098M"
+
+ENTRYPOINT ["/utils/entrypoint.sh"]
