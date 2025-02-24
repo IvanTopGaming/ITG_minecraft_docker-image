@@ -13,3 +13,6 @@ services:
       - MOTD=Waiting for players...
       - ONLINE_MODE=false
     restart: unless-stopped
+    stop_grace_period: 120s
+    stdin_open: true
+    tty: true
