@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec java ${JVM_OPTS} -jar server.jar nogui
+exec java ${JVM_OPTS} -jar ${CORE_JAR} nogui
