@@ -23,7 +23,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
          - ./server:/minecraft
        environment:
          - JVM_OPTS=-Xmx8G -Xms8G
-		 - CORE_JAR=server.jar
+         - CORE_JAR=server.jar
          - DIFFICULTY=hard
          - ALLOW_NETHER=false
          - MOTD=Waiting for players...
