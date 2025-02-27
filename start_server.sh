@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec java ${JVM_OPTS} -jar ${CORE_JAR} nogui
+exec java -javaagent:/utils/Log4jPatcher.jar ${JVM_OPTS} -jar ${CORE_JAR} nogui

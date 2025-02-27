@@ -7,6 +7,7 @@ COPY server.properties /tmp/server.properties
 COPY entrypoint.sh /utils/entrypoint.sh
 COPY setup_properties.sh /utils/setup_properties.sh
 COPY start_server.sh /utils/start_server.sh
+COPY Log4jPatcher-1.0.1.jar /utils/Log4jPatcher.jar
 
 RUN chmod +x /utils/entrypoint.sh /utils/setup_properties.sh /utils/start_server.sh
 
