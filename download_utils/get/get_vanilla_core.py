@@ -1,0 +1,55 @@
+import httpx
+
+HEADERS = {
+	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+	"User-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+}
+
+
+async def get_versions():
+	async with httpx.AsyncClient() as client:
+		url = f"https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
+		
+		response = await client.get(url=url, headers=HEADERS)
+		
+		if response.status_code == 200:
+			return response.json()['versions']
+		
+		print("Failed to get versions")
+		return None
+
+
+def get_version_url(version, versions):
+	for version_instance in versions:
+		if version_instance['id'] == version:
+			return version_instance['url']
+	 
+	print("Version not found")
+	return None
+
+
+async def get_core_url(version_url: str):
+	async with httpx.AsyncClient() as client:
+		response = await client.get(url=version_url, headers=HEADERS)
+
+		if response.status_code == 200:
+			return response.json()['downloads']['server']['url']
+		
+		print("Failed to get core url")
+		return None
+
+
+async def download_build(core_url):
+	async with httpx.AsyncClient() as client:
+		async with client.stream("GET", core_url, headers=HEADERS) as response:
+			if response.status_code == 200:
+				with open("server.jar", "wb") as file:
+					async for chunk in response.aiter_bytes():
+						file.write(chunk)
+
+
+async def get_vanilla_core(version: str):
+	version_url = get_version_url(version, await get_versions())
+	core_url = await get_core_url(version_url)
+
+	await download_build(core_url)
