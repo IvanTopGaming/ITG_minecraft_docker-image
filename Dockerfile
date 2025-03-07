@@ -4,11 +4,11 @@ WORKDIR /download_utils
 
 COPY download_utils .
 
-RUN microdnf install python3
-RUN microdnf install python3-pip
-RUN microdnf install binutils
+RUN microdnf install -y python3 python3-pip binutils && \
+    microdnf clean all && \
+    rm -rf /var/cache/dnf
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pyinstaller -F main.py
 
