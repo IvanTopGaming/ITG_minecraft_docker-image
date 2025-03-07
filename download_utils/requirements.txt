@@ -1,0 +1,10 @@
+anyio
+certifi
+exceptiongroup
+h11
+httpcore
+httpx
+idna
+sniffio
+typing_extensions
+pyinstaller
