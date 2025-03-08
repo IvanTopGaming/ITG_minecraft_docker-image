@@ -3,6 +3,7 @@
 This Docker image provides a ready-to-use Minecraft server, configured for easy deployment and customization. It supports both GraalVM and Zulu JDK for different performance and compatibility needs.
 
 #### Features:
+- **Automatic core download**: Automatic download support for the latest Vanilla, Paper, Purpur builds of all versions.
 - **Customizable Server Properties**: Easily configure server settings via environment variables.
 - **GraalVM and Zulu JDK Support**: Choose between GraalVM for performance or Zulu JDK for lightweight and compatibility with older Minecraft versions.
 - **Automatic Restart**: The server automatically restarts unless explicitly stopped.
@@ -28,6 +29,8 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
          - ALLOW_NETHER=false
          - MOTD=Waiting for players...
          - ONLINE_MODE=false
+         - GAME_VERSION=1.21.4
+         - CORE_TYPE=purpur
        restart: unless-stopped
        stop_grace_period: 120s
        stdin_open: true
@@ -42,6 +45,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
 #### Customization:
 - **Environment Variables**: Modify server properties by setting environment variables in the `docker-compose.yml` file. For example, to change the difficulty, set `DIFFICULTY=hard`.
 - **Volume Mounting**: The server data is stored in the `./server` directory on your host machine. Ensure this directory exists before starting the container.
+- **Auto download core**: Specify the `GAME_VERSION=1.21.4` and `CORE_TYPE=purpur` in `docker-compose.yml`.
 
 #### Using Zulu JDK:
 For lighter images or compatibility with older Minecraft versions, use the Zulu JDK-based images:
