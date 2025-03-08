@@ -1,8 +1,10 @@
-
 import httpx
 import hashlib
 import sys
+import logging
 
+
+logging.basicConfig(level=logging.INFO)
 
 HEADERS = {
 	"Accept": "*/*",
@@ -18,7 +20,7 @@ def get_file_hash(algorithm):
 	elif algorithm == 'sha1':
 		hash = hashlib.sha1()
 	else:
-		print("Unknown hash algorithm")
+		logging.error("Unknown hash algorithm")
 		sys.exit(-1)
 
 	with open('server.jar',"rb") as f:
@@ -50,7 +52,7 @@ async def get_latest_build(version: str):
 		if response.status_code == 200:
 			return response.json()['builds']['latest']
 
-		print("Failed to get latest build")
+		logging.error("Failed to get latest build")
 		return None
 
 
@@ -68,9 +70,9 @@ async def download_build(version: str, build: str):
 	file_hash = get_file_hash(algorithm)
 
 	if await compare_hash(version, build, file_hash, algorithm):
-		print("Hashes match")
+		logging.info("Hashes match")
 	else:
-		print("Hashes do not match")
+		logging.error("Hashes do not match")
 		sys.exit(-1)
 
 async def get_purpur_core(version):

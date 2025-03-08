@@ -1,7 +1,10 @@
 import httpx
 import hashlib
 import sys
+import logging
 
+
+logging.basicConfig(level=logging.INFO)
 
 HEADERS = {
 	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -17,7 +20,7 @@ def get_file_hash(algorithm):
 	elif algorithm == 'sha1':
 		hash = hashlib.sha1()
 	else:
-		print("Unknown hash algorithm")
+		logging.error("Unknown hash algorithm")
 		sys.exit(-1)
 
 	with open('server.jar',"rb") as f:
@@ -42,7 +45,7 @@ async def get_versions():
 		if response.status_code == 200:
 			return response.json()['versions']
 		
-		print("Failed to get versions")
+		logging.error("Failed to get versions")
 		return None
 
 
@@ -51,7 +54,7 @@ def get_version_url(version, versions):
 		if version_instance['id'] == version:
 			return version_instance['url']
 	 
-	print("Version not found")
+	logging.error("Version not found")
 	return None
 
 
@@ -62,7 +65,7 @@ async def get_core_url(version_url: str):
 		if response.status_code == 200:
 			return response.json()['downloads']['server']
 		
-		print("Failed to get core url")
+		logging.error("Failed to get core url")
 		return None
 
 
@@ -78,9 +81,9 @@ async def download_build(core_url):
 	file_hash = get_file_hash(algorithm)
 
 	if await compare_hash(core_url[algorithm], file_hash):
-		print("Hashes match")
+		logging.info("Hashes match")
 	else:
-		print("Hashes do not match")
+		logging.error("Hashes do not match")
 		sys.exit(-1)
 
 
