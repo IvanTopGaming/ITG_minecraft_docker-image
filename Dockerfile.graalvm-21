@@ -14,6 +14,11 @@ RUN pyinstaller -F main.py
 
 FROM ghcr.io/graalvm/jdk-community:21
 
+RUN microdnf update --nodocs && \
+	microdnf install -y fontconfig && \
+	microdnf clean all && \
+	rm -rf /var/cache/dnf
+
 WORKDIR /minecraft
 
 COPY server.properties /tmp/server.properties
