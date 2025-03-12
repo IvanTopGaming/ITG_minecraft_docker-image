@@ -31,6 +31,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
          - ONLINE_MODE=false
          - GAME_VERSION=1.21.4
          - CORE_TYPE=purpur
+         - ENABLE_LOG4J_PATCH=true
        restart: unless-stopped
        stop_grace_period: 120s
        stdin_open: true
