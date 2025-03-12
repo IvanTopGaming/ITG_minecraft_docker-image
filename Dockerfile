@@ -32,6 +32,7 @@ COPY Log4jPatcher-1.0.1.jar /utils/Log4jPatcher.jar
 
 RUN chmod +x /utils/entrypoint.sh /utils/setup_properties.sh /utils/start_server.sh /utils/download_utils/dist/main
 
+ENV ENABLE_LOG4J_PATCH=true
 ENV JVM_OPTS="-Xmx4098M -Xms4098M"
 
 ENTRYPOINT ["/utils/entrypoint.sh"]
