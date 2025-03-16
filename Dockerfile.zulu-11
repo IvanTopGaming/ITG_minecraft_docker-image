@@ -19,7 +19,7 @@ WORKDIR /minecraft
 COPY --from=builder /download_utils/dist/main /utils/download_utils/dist/main
 
 COPY server.properties /tmp/server.properties
-COPY eula.txt /minecraft/eula.txt
+COPY eula.txt /tmp/eula.txt
 
 COPY entrypoint.sh /utils/entrypoint.sh
 COPY setup_properties.sh /utils/setup_properties.sh

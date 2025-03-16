@@ -25,7 +25,7 @@ RUN microdnf update --nodocs && \
 WORKDIR /minecraft
 
 COPY server.properties /tmp/server.properties
-COPY eula.txt /minecraft/eula.txt
+COPY eula.txt /tmp/eula.txt
 
 COPY --from=builder /download_utils/dist/main /utils/download_utils/dist/main
 
