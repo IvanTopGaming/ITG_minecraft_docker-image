@@ -18,7 +18,7 @@ RUN pyinstaller -F main.py
 FROM ghcr.io/graalvm/jdk-community:latest
 
 RUN microdnf update --nodocs && \
-    microdnf install -y fontconfig && \
+    microdnf install -y fontconfig unzip && \
     microdnf clean all && \
     rm -rf /var/cache/dnf
 
