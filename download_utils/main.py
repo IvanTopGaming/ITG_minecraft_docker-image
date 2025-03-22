@@ -6,6 +6,7 @@ import logging
 from get.get_vanilla_core import get_vanilla_core
 from get.get_paper_core import get_paper_core
 from get.get_purpur_core import get_purpur_core
+from get.get_velocity_core import get_velocity_core
 
 logging.basicConfig(level=logging.INFO, filename="download_util.log", filemode="w")
 
@@ -30,6 +31,8 @@ elif core_type == "paper":
 	asyncio.run(get_paper_core(game_verison))
 elif core_type == "purpur":
 	asyncio.run(get_purpur_core(game_verison))
+elif core_type == "velocity":
+	asyncio.run(get_velocity_core(game_verison))
 else:
 	logging.error("Unknown core type, exiting...")
 	sys.exit(-1)
