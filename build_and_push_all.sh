@@ -15,4 +15,4 @@ docker push docker.io/ivantopgaming/minecraft_server:zulu-11
 
 docker push docker.io/ivantopgaming/minecraft_server:graalvm-17
 docker push docker.io/ivantopgaming/minecraft_server:graalvm-21
-docker push docker.io/ivantopgaming/minecraft_server:latest .
+docker push docker.io/ivantopgaming/minecraft_server:latest
