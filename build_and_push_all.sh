@@ -5,7 +5,7 @@ docker build -t docker.io/ivantopgaming/minecraft_server:zulu-11 -f Dockerfile.z
 
 docker build -t docker.io/ivantopgaming/minecraft_server:graalvm-17 -f Dockerfile.graalvm-17 .
 docker build -t docker.io/ivantopgaming/minecraft_server:graalvm-21 -f Dockerfile.graalvm-21 .
-docker build -t ivantopgaming/minecraft_server:latest .
+docker build -t docker.io/ivantopgaming/minecraft_server:latest .
 
 
 docker push docker.io/ivantopgaming/minecraft_server:zulu-23
@@ -15,4 +15,4 @@ docker push docker.io/ivantopgaming/minecraft_server:zulu-11
 
 docker push docker.io/ivantopgaming/minecraft_server:graalvm-17
 docker push docker.io/ivantopgaming/minecraft_server:graalvm-21
-docker push ivantopgaming/minecraft_server:latest
+docker push docker.io/ivantopgaming/minecraft_server:latest .
