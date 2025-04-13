@@ -39,12 +39,12 @@ async def compare_hash(true_hash, file_hash):
 async def get_versions():
 	async with httpx.AsyncClient() as client:
 		url = f"https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
-		
-		response = await client.get(url=url, headers=HEADERS)
-		
-		if response.status_code == 200:
-			return response.json()['versions']
-		
+		try:
+			response = await client.get(url=url, headers=HEADERS)
+			if response.status_code == 200:
+				return response.json()['versions']
+		except httpx.RequestError as exc:
+			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
 		logging.error("Failed to get versions")
 		return None
 
@@ -60,11 +60,12 @@ def get_version_url(version, versions):
 
 async def get_core_url(version_url: str):
 	async with httpx.AsyncClient() as client:
-		response = await client.get(url=version_url, headers=HEADERS)
-
-		if response.status_code == 200:
-			return response.json()['downloads']['server']
-		
+		try:
+			response = await client.get(url=version_url, headers=HEADERS)
+			if response.status_code == 200:
+				return response.json()['downloads']['server']
+		except httpx.RequestError as exc:
+			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
 		logging.error("Failed to get core url")
 		return None
 

@@ -33,25 +33,26 @@ def get_file_hash(algorithm):
 async def compare_hash(version, build, file_hash, algorithm):
 	async with httpx.AsyncClient() as client:
 		url = f'https://api.purpurmc.org/v2/purpur/{version}/{build}/'
-		
-		response = await client.get(url=url, headers=HEADERS)
-		
-		if response.status_code == 200:
-			true_hash = response.json()[algorithm]
-
-		if true_hash == file_hash:
-			return True
+		try:
+			response = await client.get(url=url, headers=HEADERS)
+			if response.status_code == 200:
+				true_hash = response.json()[algorithm]
+				if true_hash == file_hash:
+					return True
+		except httpx.RequestError as exc:
+			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
+		return False
 
 
 async def get_latest_build(version: str):
 	async with httpx.AsyncClient() as client:
 		url = f"https://api.purpurmc.org/v2/purpur/{version}/"
-		
-		response = await client.get(url=url, headers=HEADERS)
-		
-		if response.status_code == 200:
-			return response.json()['builds']['latest']
-
+		try:
+			response = await client.get(url=url, headers=HEADERS)
+			if response.status_code == 200:
+				return response.json()['builds']['latest']
+		except httpx.RequestError as exc:
+			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
 		logging.error("Failed to get latest build")
 		return None
 
