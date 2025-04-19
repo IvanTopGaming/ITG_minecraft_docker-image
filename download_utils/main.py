@@ -23,7 +23,7 @@ if game_verison == None and core_type == None:
 
 download_log4j_patch()
 
-if core_type in SUPPORTED_CORES:
+if core_type in SUPPORTED_CORES and core_type != SUPPORTED_CORES[3]:
 	transfer_eula()
 	patch_server_properties()
 

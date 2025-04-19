@@ -9,36 +9,30 @@ RUN apt-get update && \
 	python3 \
 	python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache-dir -r /download_utils/requirements.txt && \
-    pyinstaller -F /download_utils/main.py
+    pip install --no-cache-dir -r requirements.txt && \
+    pyinstaller -F main.py
 
-FROM azul/zulu-openjdk:23
-
-WORKDIR /minecraft
-
-COPY --from=builder /download_utils/dist/main /utils/download_utils/dist/main
+FROM azul/zulu-openjdk:24
 
 RUN apt-get update && \
 	apt-get install -y \
-	fontconfig \
-	unzip && \
+	fontconfig && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY server.properties /tmp/server.properties
-COPY eula.txt /tmp/eula.txt
+WORKDIR /minecraft
 
-COPY entrypoint.sh /utils/entrypoint.sh
-COPY setup_properties.sh /utils/setup_properties.sh
-COPY start_server.sh /utils/start_server.sh
-COPY Log4jPatcher-1.0.1.jar /utils/Log4jPatcher.jar
+COPY resources/eula.txt /tmp/eula.txt
+COPY resources/server.properties /tmp/server.properties
+
+COPY --from=builder /download_utils/dist/main /bin/main
+
+COPY /scripts /scripts
 
 RUN chmod +x \
-    /utils/entrypoint.sh \
-    /utils/setup_properties.sh \
-    /utils/start_server.sh \
-    /utils/download_utils/dist/main
+    /scripts/start_server.sh \
+    /bin/main
 
 ENV ENABLE_LOG4J_PATCH=true
 ENV JVM_OPTS="-Xmx4098M -Xms4098M"
 
-ENTRYPOINT ["/utils/entrypoint.sh"]
+ENTRYPOINT ["/scripts/start_server.sh"]
