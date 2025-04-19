@@ -3,6 +3,7 @@ import hashlib
 import sys
 import logging
 
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
@@ -72,11 +73,21 @@ async def get_core_url(version_url: str):
 
 async def download_build(core_url):
 	async with httpx.AsyncClient() as client:
-		async with client.stream("GET", core_url['url'], headers=HEADERS) as response:
-			if response.status_code == 200:
-				with open("server.jar", "wb") as file:
-					async for chunk in response.aiter_bytes():
-						file.write(chunk)
+		async with client.stream("GET", core_url['url']) as response:
+			response.raise_for_status()
+			total = int(response.headers.get("Content-Length", 0))
+			with open('server.jar', "wb") as file, tqdm(
+				total=total,
+				unit="iB",
+				unit_scale=True,
+				unit_divisor=1024,
+				desc='server.jar'
+			) as progress:
+				num_bytes_downloaded = 0
+				async for chunk in response.aiter_bytes():
+					file.write(chunk)
+					num_bytes_downloaded += len(chunk)
+					progress.update(len(chunk))
 
 	algorithm = "sha1"
 	file_hash = get_file_hash(algorithm)
@@ -93,3 +104,8 @@ async def get_vanilla_core(version: str):
 	core_url = await get_core_url(version_url)
 
 	await download_build(core_url)
+
+
+if __name__ == '__main__':
+	import asyncio
+	asyncio.run(get_vanilla_core('1.21.4'))

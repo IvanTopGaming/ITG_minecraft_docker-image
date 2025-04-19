@@ -7,14 +7,14 @@ services:
     volumes:
       - ./server:/minecraft
     environment:
-      - JVM_OPTS=-Xmx8G -Xms8G
+      - JVM_OPTS=-Xmx4G -Xms4G
       - CORE_JAR=server.jar
       - DIFFICULTY=hard
       - ALLOW_NETHER=false
       - MOTD=Waiting for players...
       - ONLINE_MODE=false
-      - GAME_VERSION=3.4.0-SNAPSHOT
-      - CORE_TYPE=velocity
+      - GAME_VERSION=1.21.4
+      - CORE_TYPE=purpur
       - ENABLE_LOG4J_PATCH=true
     restart: unless-stopped
     stop_grace_period: 120s
