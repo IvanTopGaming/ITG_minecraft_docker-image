@@ -13,7 +13,6 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
 
 1. **Create a `docker-compose.yml` file**:
    ```yaml
-   version: '3.8'
    services:
      minecraft:
        image: ivantopgaming/minecraft_server:latest
@@ -51,7 +50,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
 #### Using Zulu JDK:
 For lighter images or compatibility with older Minecraft versions, use the Zulu JDK-based images:
 - **Zulu 11**: `docker.io/ivantopgaming/minecraft_server:zulu-11`
-- **Zulu (Latest)**: `docker.io/ivantopgaming/minecraft_server:zulu-23`
+- **Zulu (Latest)**: `docker.io/ivantopgaming/minecraft_server:zulu-24`
 
 #### Reporting Issues:
 If you encounter any bugs or issues, please contact **zjarc0@mail.ru**.
