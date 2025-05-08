@@ -17,11 +17,12 @@ SUPPORTED_CORES = ["vanilla", "paper", "purpur", "velocity"]
 game_verison = os.getenv("GAME_VERSION")
 core_type = os.getenv("CORE_TYPE")
 
-if game_verison == None and core_type == None:
+download_log4j_patch()
+
+if game_verison == None or core_type == None:
 	logging.info("No env's found, exiting...")
 	sys.exit(-1)
 
-download_log4j_patch()
 
 if core_type in SUPPORTED_CORES and core_type != SUPPORTED_CORES[3]:
 	transfer_eula()
