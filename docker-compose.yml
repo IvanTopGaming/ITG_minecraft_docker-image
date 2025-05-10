@@ -1,22 +1,32 @@
 services:
   minecraft:
-    image: ivantopgaming/minecraft_server:latest
+    image: ivantopgaming/minecraft_server:graalvm-21
     container_name: survival
     ports:
       - "25565:25565"
     volumes:
       - ./server:/minecraft
     environment:
-      - JVM_OPTS=-Xmx8G -Xms8G
+      - JVM_OPTS=-Xmx4G -Xms4G
       - CORE_JAR=server.jar
       - DIFFICULTY=hard
       - ALLOW_NETHER=false
       - MOTD=Waiting for players...
       - ONLINE_MODE=false
-      - GAME_VERSION=1.21.5
+      - GAME_VERSION=1.21.4
       - CORE_TYPE=purpur
       - ENABLE_LOG4J_PATCH=true
+      - ENABLE_API=false
     restart: unless-stopped
     stop_grace_period: 120s
     stdin_open: true
     tty: true
+  panel:
+    image: ivantopgaming/status_panel:latest
+    container_name: panel
+    ports:
+      - "5000:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PANEL_URL=/super_secret_url

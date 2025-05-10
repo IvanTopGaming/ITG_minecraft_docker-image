@@ -31,10 +31,20 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
          - GAME_VERSION=1.21.4
          - CORE_TYPE=purpur
          - ENABLE_LOG4J_PATCH=true
+         - ENABLE_API=true
        restart: unless-stopped
        stop_grace_period: 120s
        stdin_open: true
        tty: true
+     panel:
+	   image: ivantopgaming/status_panel:latest
+	   container_name: panel
+	   ports:
+	     - "5000:5000"
+	   volumes:
+	     - /var/run/docker.sock:/var/run/docker.sock
+	   environment:
+	     - PANEL_URL=/super_secret_url
    ```
 
 2. **Start the server**:
@@ -46,6 +56,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
 - **Environment Variables**: Modify server properties by setting environment variables in the `docker-compose.yml` file. For example, to change the difficulty, set `DIFFICULTY=hard`.
 - **Volume Mounting**: The server data is stored in the `./server` directory on your host machine. Ensure this directory exists before starting the container.
 - **Auto download core**: Specify the `GAME_VERSION=1.21.4` and `CORE_TYPE=purpur` in `docker-compose.yml`.
+- **Monitore Panel**: Manage your containers via a convenient panel (`ENABLE_API=true` must be setted in `docker-compose.yml`).
 
 #### Using Zulu JDK:
 For lighter images or compatibility with older Minecraft versions, use the Zulu JDK-based images:
