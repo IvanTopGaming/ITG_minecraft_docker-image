@@ -1,6 +1,6 @@
 services:
   minecraft:
-    image: ivantopgaming/minecraft_server:graalvm-21
+    image: ivantopgaming/minecraft_server:graalvm-24
     container_name: survival
     ports:
       - "25565:25565"

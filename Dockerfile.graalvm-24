@@ -21,7 +21,7 @@ RUN pyinstaller -F /app/download_utils/main.py
 WORKDIR /app/api
 RUN pyinstaller -F /app/api/main.py
 
-FROM ivantopgaming/mini_graalvm:21
+FROM ivantopgaming/mini_graalvm:24
 
 RUN apt update && \
     apt install -y --fix-missing curl fontconfig && \

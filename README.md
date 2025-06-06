@@ -15,7 +15,7 @@ This Docker image provides a ready-to-use Minecraft server, configured for easy 
    ```yaml
    services:
      minecraft:
-       image: ivantopgaming/minecraft_server:latest
+       image: ivantopgaming/minecraft_server:graalvm-24
        container_name: survival
        ports:
          - "25565:25565"
