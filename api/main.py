@@ -4,7 +4,6 @@ import os
 import sys
 
 from flask import Flask
-from flask.logging import default_handler
 from mcstatus import JavaServer
 
 server_port = os.getenv("SERVER_PORT", 25565)
@@ -27,7 +26,7 @@ def get_status():
 		})
 	else:
 
-		data = {
+		data: dict[str, str | int] = {
 			'version': status.version.name,
 			'online': status.players.online,
 		}

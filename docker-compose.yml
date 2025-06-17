@@ -21,12 +21,3 @@ services:
     stop_grace_period: 120s
     stdin_open: true
     tty: true
-  panel:
-    image: ivantopgaming/status_panel:latest
-    container_name: panel
-    ports:
-      - "5000:5000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - PANEL_URL=/super_secret_url

@@ -4,6 +4,7 @@ import sys
 import logging
 
 from tqdm import tqdm
+from typing import Optional, List, Dict, Any
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,7 +14,7 @@ HEADERS = {
 }
 
 
-def get_file_hash(algorithm):
+def get_file_hash(algorithm: str):
 	if algorithm == 'sha256':
 		hash = hashlib.sha256()
 	elif algorithm == 'md5':
@@ -31,10 +32,9 @@ def get_file_hash(algorithm):
 	return hash.hexdigest()
 
 
-async def compare_hash(true_hash, file_hash):
-	async with httpx.AsyncClient() as client:
-		if true_hash == file_hash:
-			return True
+async def compare_hash(true_hash: str, file_hash: str):
+	if true_hash == file_hash:
+		return True
 
 
 async def get_versions():
@@ -46,16 +46,16 @@ async def get_versions():
 				return response.json()['versions']
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
-		logging.error("Failed to get versions")
+		
 		return None
 
 
-def get_version_url(version, versions):
+
+def get_version_url(version: str, versions: List[Dict[str, Any]]) -> Optional[str]:
 	for version_instance in versions:
 		if version_instance['id'] == version:
 			return version_instance['url']
 	 
-	logging.error("Version not found")
 	return None
 
 
@@ -67,11 +67,11 @@ async def get_core_url(version_url: str):
 				return response.json()['downloads']['server']
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
-		logging.error("Failed to get core url")
+		
 		return None
 
 
-async def download_build(core_url):
+async def download_build(core_url: Dict[str, Any]):
 	async with httpx.AsyncClient() as client:
 		async with client.stream("GET", core_url['url']) as response:
 			response.raise_for_status()
@@ -100,8 +100,23 @@ async def download_build(core_url):
 
 
 async def get_vanilla_core(version: str):
-	version_url = get_version_url(version, await get_versions())
+	versions = await get_versions()
+
+	if versions is None:
+		logging.error("Failed to get versions")
+		sys.exit(-1)
+
+	version_url = get_version_url(version, versions)
+	
+	if version_url is None:
+		logging.error("Could not find version URL for the specified version.")
+		sys.exit(-1)
+	
 	core_url = await get_core_url(version_url)
+	
+	if core_url is None:
+		logging.error("Could not get core URL.")
+		sys.exit(-1)
 
 	await download_build(core_url)
 

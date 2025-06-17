@@ -134,7 +134,7 @@ def patch_server_properties():
 
     lines = []
     properties_to_update = {}
-    updated_keys_in_file = set()
+    updated_keys_in_file: set[str] = set()
     updated_count = 0
 
     for env_var, prop_key in ENV_MAPPING.items():
@@ -159,8 +159,8 @@ def patch_server_properties():
         logging.error(f"Failed to read {PROPERTIES_DEST}: {e}")
         return 
 
-    new_lines = []
-    processed_keys = set()
+    new_lines: list[str] = []
+    processed_keys: set[str] = set()
 
     for line in lines:
         stripped_line = line.strip()

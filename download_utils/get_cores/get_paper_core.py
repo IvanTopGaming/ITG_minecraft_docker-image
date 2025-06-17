@@ -14,7 +14,7 @@ HEADERS = {
 }
 
 
-def get_file_hash(algorithm):
+def get_file_hash(algorithm: str):
 	if algorithm == 'sha256':
 		hash = hashlib.sha256()
 	elif algorithm == 'md5':
@@ -32,7 +32,7 @@ def get_file_hash(algorithm):
 	return hash.hexdigest()
 
 
-async def compare_hash(version, file_hash, algorithm):
+async def compare_hash(version: str, file_hash: str, algorithm: str):
 	async with httpx.AsyncClient() as client:
 		url = f'https://api.papermc.io/v2/projects/paper/versions/{version}/builds/'
 		try:
@@ -43,6 +43,7 @@ async def compare_hash(version, file_hash, algorithm):
 					return True
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
+
 		return False
 
 
@@ -55,7 +56,7 @@ async def get_latest_build_name(version: str):
 				return response.json()['builds'][-1]['downloads']['application']['name']
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
-		logging.error("Failed to get latest build name")
+			
 		return None
 
 
@@ -70,7 +71,6 @@ def fetch_version_and_build(filename: str):
 	
 		return version, number
 
-	logging.error("Failed to fetch version and build")
 	return None 
 
 
@@ -106,11 +106,22 @@ async def download_build(version: str, build: str):
 
 async def get_paper_core(version: str):
 	latest_build_name = await get_latest_build_name(version)
-	version, build = fetch_version_and_build(latest_build_name)
+
+	if latest_build_name is None:
+		logging.error("Could not retrieve the latest build name.")
+		sys.exit(-1)
+
+	result = fetch_version_and_build(latest_build_name)
+	
+	if result is None:
+		logging.error("Could not fetch version and build from build name.")
+		sys.exit(-1)
+
+	version, build = result
 
 	await download_build(version, build)
 
 
 if __name__ == '__main__':
 	import asyncio
-	asyncio.run(get_paper_core('1.21.4'))
+	asyncio.run(get_paper_core('1.21.5'))

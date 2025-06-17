@@ -13,7 +13,7 @@ HEADERS = {
 }
 
 
-def get_file_hash(algorithm):
+def get_file_hash(algorithm: str):
 	if algorithm == 'sha256':
 		hash = hashlib.sha256()
 	elif algorithm == 'md5':
@@ -31,7 +31,7 @@ def get_file_hash(algorithm):
 	return hash.hexdigest()
 
 
-async def compare_hash(version, build, file_hash, algorithm):
+async def compare_hash(version: str, build: str, file_hash: str, algorithm: str):
 	async with httpx.AsyncClient() as client:
 		url = f'https://api.purpurmc.org/v2/purpur/{version}/{build}/'
 		try:
@@ -42,6 +42,7 @@ async def compare_hash(version, build, file_hash, algorithm):
 					return True
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
+
 		return False
 
 
@@ -54,7 +55,7 @@ async def get_latest_build(version: str):
 				return response.json()['builds']['latest']
 		except httpx.RequestError as exc:
 			logging.error(f"An error occurred while requesting {exc.request.url!r}: {exc}")
-		logging.error("Failed to get latest build")
+			
 		return None
 
 
@@ -87,8 +88,12 @@ async def download_build(version: str, build: str):
 		logging.error("Hashes do not match")
 		sys.exit(-1)
 
-async def get_purpur_core(version):
+async def get_purpur_core(version: str):
 	latest_build = await get_latest_build(version)
+
+	if latest_build is None:
+		logging.error("Could not retrieve the latest build.")
+		sys.exit(-1)
 
 	await download_build(version, latest_build)
 
