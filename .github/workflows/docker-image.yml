@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         variant:
+          - default
           - graalvm-17
           - graalvm-21
           - graalvm-24
@@ -42,7 +43,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.variant }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.variant == 'default' && '' || format('-{0}', matrix.variant) }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -52,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.${{ matrix.variant }}
+          file: ${{ matrix.variant == 'default' && 'Dockerfile' || format('Dockerfile.{0}', matrix.variant) }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
