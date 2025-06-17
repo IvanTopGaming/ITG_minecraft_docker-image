@@ -231,5 +231,11 @@ def download_log4j_patch():
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed to download Log4jPatcher.jar: {e}")
         logging.error(f"Stderr: {e.stderr.decode()}")
+        
+        os.environ["ENABLE_LOG4J_PATCH"] = "False"
+        logging.error("ENABLE_LOG4J_PATCH set to False due to download failure.")
     except Exception as e:
         logging.error(f"An unexpected error occurred during Log4jPatcher download: {e}")
+        
+        os.environ["ENABLE_LOG4J_PATCH"] = "False"
+        logging.error("ENABLE_LOG4J_PATCH set to False due to download failure.")
