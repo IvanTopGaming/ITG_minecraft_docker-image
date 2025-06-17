@@ -17,6 +17,7 @@ SUPPORTED_CORES = ["vanilla", "paper", "purpur", "velocity", "fabric"]
 
 game_verison = os.getenv("GAME_VERSION")
 core_type = os.getenv("CORE_TYPE")
+core_jar = os.getenv("CORE_JAR", "server.jar")
 
 download_log4j_patch()
 
@@ -30,8 +31,8 @@ if core_type in SUPPORTED_CORES and core_type != SUPPORTED_CORES[3]:
 	patch_server_properties()
 
 
-if os.path.exists("/minecraft/server.jar"):
-	logging.info("Server.jar already exists, exiting...")
+if os.path.exists(f"/minecraft/{core_jar}"):
+	logging.info(f"{core_jar} already exists, exiting...")
 	sys.exit(-1)
 
 

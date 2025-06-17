@@ -1,5 +1,6 @@
 import httpx
 import hashlib
+import os
 import sys
 import logging
 
@@ -8,6 +9,7 @@ from typing import Optional, List, Dict, Any
 
 logging.basicConfig(level=logging.INFO)
 
+core_jar = os.getenv("CORE_JAR", "server.jar")
 HEADERS = {
 	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
 	"User-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
@@ -25,7 +27,7 @@ def get_file_hash(algorithm: str):
 		logging.error("Unknown hash algorithm")
 		sys.exit(-1)
 
-	with open('server.jar',"rb") as f:
+	with open(core_jar,"rb") as f:
 		for byte_block in iter(lambda: f.read(4096),b""):
 			hash.update(byte_block)
 		
@@ -76,12 +78,12 @@ async def download_build(core_url: Dict[str, Any]):
 		async with client.stream("GET", core_url['url']) as response:
 			response.raise_for_status()
 			total = int(response.headers.get("Content-Length", 0))
-			with open('server.jar', "wb") as file, tqdm(
+			with open(core_jar, "wb") as file, tqdm(
 				total=total,
 				unit="iB",
 				unit_scale=True,
 				unit_divisor=1024,
-				desc='server.jar'
+				desc=core_jar
 			) as progress:
 				num_bytes_downloaded = 0
 				async for chunk in response.aiter_bytes():
