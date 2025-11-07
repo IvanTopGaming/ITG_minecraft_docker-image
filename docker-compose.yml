@@ -13,8 +13,8 @@ services:
       - ALLOW_NETHER=false
       - MOTD=Waiting for players...
       - ONLINE_MODE=false
-      - GAME_VERSION=1.21.4
-      - CORE_TYPE=purpur
+      - GAME_VERSION=1.21.8
+      - CORE_TYPE=leaf
       - ENABLE_LOG4J_PATCH=true
       - ENABLE_API=true
     restart: unless-stopped
