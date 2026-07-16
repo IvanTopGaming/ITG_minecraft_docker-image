@@ -22,6 +22,11 @@ export HOME=/minecraft
 
 /bin/download_utils || true
 
+if [ ! -s "/minecraft/${CORE_JAR}" ]; then
+    echo "[entrypoint] /minecraft/${CORE_JAR} is missing — core download failed, or set GAME_VERSION and CORE_TYPE to fetch one." >&2
+    exit 1
+fi
+
 if [ "$ENABLE_LOG4J_PATCH" = "true" ] && [ -s "$PATCHER_DIR/Log4jPatcher.jar" ]; then
     exec java -javaagent:"$PATCHER_DIR/Log4jPatcher.jar" ${JVM_OPTS} -jar ${CORE_JAR} ${POST_JVM_OPTS} nogui
 else
