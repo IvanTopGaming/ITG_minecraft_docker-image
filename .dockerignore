@@ -1,1 +1,12 @@
+.git
+.github
+.venv
+**/__pycache__
+*.pyc
 server/
+README.md
+LICENSE
+docker-compose.yml
+.editorconfig
+.gitattributes
+.gitignore

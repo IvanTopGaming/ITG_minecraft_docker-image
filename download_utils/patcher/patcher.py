@@ -10,7 +10,8 @@ EULA_SRC = os.path.join(TMP_DIR, "eula.txt")
 EULA_DEST = os.path.join(MINECRAFT_DIR, "eula.txt")
 PROPERTIES_SRC = os.path.join(TMP_DIR, "server.properties")
 PROPERTIES_DEST = os.path.join(MINECRAFT_DIR, "server.properties")
-LOG4J_PATCHER_DEST = "/bin/Log4jPatcher.jar"
+PATCHER_DIR = os.getenv("PATCHER_DIR", "/opt/minecraft")
+LOG4J_PATCHER_DEST = os.path.join(PATCHER_DIR, "Log4jPatcher.jar")
 
 
 def mapping_generator():

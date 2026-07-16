@@ -1,59 +1,99 @@
-name: Minecraft Docker Image
+name: Build and publish
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-push:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
     strategy:
+      fail-fast: false
       matrix:
-        variant:
-          - default
-          - graalvm-17
-          - graalvm-21
-          - graalvm-24
-          - zulu-11
-          - zulu-17
-          - zulu-21
-          - zulu-24
-    steps:
-      - uses: actions/checkout@v3
+        include:
+          - variant: graalvm-25
+            base: ghcr.io/ivantopgaming/mini_graalvm:25
+            latest: true
+          - variant: graalvm-24
+            base: ghcr.io/ivantopgaming/mini_graalvm:24
+          - variant: graalvm-21
+            base: ghcr.io/ivantopgaming/mini_graalvm:21
+          - variant: zulu-24
+            base: azul/zulu-openjdk:24
+          - variant: zulu-21
+            base: azul/zulu-openjdk:21
+          - variant: zulu-17
+            base: azul/zulu-openjdk:17
+          - variant: zulu-11
+            base: azul/zulu-openjdk:11
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve image name
+        id: img
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/minecraft_server" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up QEMU (optional emulation)
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Generate metadata for variant ${{ matrix.variant }}
+      - name: Compute tags
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.variant == 'default' && '' || format('-{0}', matrix.variant) }}
+          images: ${{ steps.img.outputs.name }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
+            type=raw,value=${{ matrix.variant }}
+            type=raw,value=latest,enable=${{ matrix.latest == true }}
 
-      - name: Build & push variant ${{ matrix.variant }}
+      - name: Build
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ${{ matrix.variant == 'default' && 'Dockerfile' || format('Dockerfile.{0}', matrix.variant) }}
+          build-args: BASE_IMAGE=${{ matrix.base }}
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
+          provenance: false
+
+      - name: Smoke test
+        env:
+          IMAGE: ${{ steps.img.outputs.name }}:${{ matrix.variant }}
+        run: |
+          docker run --rm --entrypoint java "$IMAGE" -version
+          docker run --rm --entrypoint sh "$IMAGE" -c \
+            'test -x /bin/download_utils && test -x /scripts/start_server.sh'
+          docker run --rm --entrypoint sh -e GAME_VERSION=1.21.8 -e CORE_TYPE=vanilla "$IMAGE" -c \
+            '/bin/download_utils; test -s /minecraft/server.jar'
+
+      - name: Push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: BASE_IMAGE=${{ matrix.base }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          provenance: false
