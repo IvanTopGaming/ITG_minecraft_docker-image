@@ -20,7 +20,7 @@ fi
 
 export HOME=/minecraft
 
-/bin/download_utils
+/bin/download_utils || true
 
 if [ "$ENABLE_LOG4J_PATCH" = "true" ] && [ -s "$PATCHER_DIR/Log4jPatcher.jar" ]; then
     exec java -javaagent:"$PATCHER_DIR/Log4jPatcher.jar" ${JVM_OPTS} -jar ${CORE_JAR} ${POST_JVM_OPTS} nogui
